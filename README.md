@@ -30,6 +30,24 @@ PhoneClaw is a foreground Android service stack, not a single app screen. Four p
                                 automation engine -> TTS response
 ```
 
+## Getting started
+
+PhoneClaw isn't on the Play Store — it's a sideloaded APK for a device you control.
+
+1. **Install:** grab `phoneclaw-final2.apk` from this repo's [Releases](https://github.com/inoahaipro/phoneclaw/releases), enable "install from unknown sources" for your file manager/browser, install it.
+2. **Grant permissions on first launch:**
+   - Settings → Accessibility → PhoneClaw → turn the service **on** (this is what powers `MyAccessibilityService`'s tap/swipe/read automation — Android requires this to be enabled manually, it can't be granted programmatically).
+   - Accept the screen-capture (MediaProjection) prompt when it appears — needed for `ScreenCaptureService`.
+   - Grant any other runtime permission prompts (microphone for the Jarvis wake-word layer, etc.).
+3. **Confirm the bridge is live:** open the app once. A persistent notification ("PhoneClaw — Local server running on port 7779") means `LocalServerService` is up and listening.
+4. **Talk to it:** open a raw TCP socket to the phone's IP on port `7779` and send a command. This is a script-facing integration point, not a polished public API — see *Known limitations* below before expecting a documented wire format.
+5. **Voice mode:** double-click the side key to open the Jarvis mic dialog, speak a command, it executes through the same automation engine with a spoken response.
+
+## Known limitations
+
+- **Exact socket protocol not recovered.** `LocalServerService.handleClient()` — the method that actually parses incoming commands — didn't decompile cleanly (JADX bailed with "Method not decompiled"), and the original source is gone (see *Status* below). The port, service name, and overall bridge architecture are confirmed from the manifest and surrounding code; the specific message format sent over that socket isn't documented here and would need to be rebuilt or re-derived by hooking the running service.
+- No Play Store listing — sideload only, and Android will warn about installing from an unknown source. Expected for a personal/dev tool, not a bug.
+
 ## Status
 
 Built and verified working on a Samsung Galaxy S22+ (SM-S906U) in early 2026. The original Android/Kotlin source project didn't survive a later environment reset — this documentation was reconstructed by decompiling the last known-good build (`phoneclaw-final2.apk`) rather than from the lost source tree. The compiled APK itself is attached to this repo's Releases.
