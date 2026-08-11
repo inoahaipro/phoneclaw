@@ -2,7 +2,7 @@
 
 An Android automation agent that turns a phone into something an AI agent can actually operate — not just query. Built as the execution layer behind a "Claude controls my phone" workflow: an AI sends a script, PhoneClaw runs it on-device and reports back.
 
-**Live overview page:** https://phoneclaw.vercel.app *(placeholder — replaced after deploy)*
+**Live overview page:** https://phoneclawsite.vercel.app
 
 ## What it does
 
