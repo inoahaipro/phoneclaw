@@ -1,6 +1,6 @@
 # PhoneClaw
 
-An Android automation agent that turns a phone into something an AI agent can actually operate, not just query. Built as the execution layer behind a "Claude controls my phone" workflow: an AI sends a script, PhoneClaw runs it on-device and reports back.
+An Android automation agent that turns a phone into something an AI agent can actually operate. Built as the execution layer behind a "Claude controls my phone" workflow: an AI sends a script, PhoneClaw runs it on-device and reports back.
 
 **Live overview page:** https://phoneclawsite.vercel.app
 
@@ -10,7 +10,7 @@ PhoneClaw is a foreground Android service stack, not a single app screen. Four p
 
 - **`LocalServerService`**: a raw socket server on port `7779` running as a foreground service. This is the actual bridge: an external process (an AI agent, a script, Claude itself) opens a socket, sends a command, and gets a result back. No cloud round-trip required for the execution step itself.
 - **`MyAccessibilityService`**: the automation engine, built on Android's `AccessibilityService` API. Implements a real general-purpose UI toolkit: click by view ID / content-description / text / coordinates, swipe, type into fields, scroll to top/bottom, walk the accessibility node tree, dump the current UI state as JSON, find elements by class or bounding-box area. This is what lets a script say "tap the button labeled X" and have it actually happen, on any app, without that app cooperating.
-- **`ScreenCaptureService` / `ScreenshotActivity`**: screen capture via `MediaProjection`, so an agent can *see* the screen it's driving, not just blindly send gestures.
+- **`ScreenCaptureService` / `ScreenshotActivity`**: screen capture via `MediaProjection`, so an agent can *see* the screen it's driving while it works.
 - **Jarvis voice layer** (`JarvisService`, `WakeWordService`, `VoiceCommandActivity`): a wake-word-triggered voice assistant. Speak a command, it gets transcribed and handed to an LLM, the LLM's decision gets executed through the same automation engine above, with TTS feedback. Side-key double-click, then mic, then speak, then act, then respond.
 
 ## Architecture
@@ -50,10 +50,10 @@ PhoneClaw isn't on the Play Store. It's a sideloaded APK for a device you contro
 
 ## Status
 
-Built and verified working on a Samsung Galaxy S22+ (SM-S906U) in early 2026. The original Android/Kotlin source project didn't survive a later environment reset, so this documentation was reconstructed by decompiling the last known-good build (`phoneclaw-final2.apk`) rather than from the lost source tree. The compiled APK itself is attached to this repo's Releases.
+Built and verified working on a Samsung Galaxy S22+ (SM-S906U) in early 2026. The original Android/Kotlin source project didn't survive a later environment reset. This documentation was reconstructed by decompiling the last known-good build (`phoneclaw-final2.apk`). The compiled APK itself is attached to this repo's Releases.
 
 **Stack:** Kotlin, Android `AccessibilityService`, `MediaProjection`, Kotlin Coroutines, raw sockets, Firebase (storage/db backend).
 
 ## Why it's interesting
 
-Most "AI controls a phone" demos rely on ADB tethered to a computer. PhoneClaw runs the whole execution loop on the device itself, as a background service, with no tether and no ADB session required at run time. That's what makes the wake-word Jarvis flow possible: the phone is the agent, not just a screen someone else is remoting into.
+Most "AI controls a phone" demos rely on ADB tethered to a computer. PhoneClaw runs the whole execution loop on the device itself, as a background service, with no tether and no ADB session required at run time. That's what makes the wake-word Jarvis flow possible: the phone is the agent itself.
